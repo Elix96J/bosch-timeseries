@@ -1,1 +1,27 @@
+# Env & Ingest
+run_name: "env_ingest"
+experiment: "bosch_env_ingest"
 
+data:
+  raw_dir: "./data/raw"         # folder with train_numeric.csv, train_categorical.csv, train_date.csv
+  lake_dir: "./data/lake"
+  format: "parquet"             # "parquet" or "delta"
+  compression: "zstd"
+
+spark:
+  app_name: "CIRP2026-Ingest"
+  master: "local[*]"            # or "spark://..." if you have a standalone
+  shuffle_partitions: 256
+  extra_conf:
+    spark.sql.parquet.compression.codec: "zstd"
+    spark.sql.files.ignoreCorruptFiles: "true"
+    spark.sql.caseSensitive: "true"
+
+na_policy:
+  categorical_fill: "UNK"       # leave numeric/date as null for now
+
+mlflow:
+  tracking_uri: "file:./mlruns"
+  tags:
+    stage: "env_ingest"
+    project: "cirp2026-bosch"
